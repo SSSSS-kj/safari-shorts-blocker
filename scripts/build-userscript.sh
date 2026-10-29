@@ -1,5 +1,5 @@
 #!/bin/sh
-# extension/content.js 에 유저스크립트 헤더를 붙여 dist/youtube-shorts-blocker.user.js 를 만든다.
+# Builds dist/youtube-shorts-blocker.user.js by prepending a userscript header to extension/content.js.
 set -eu
 cd "$(dirname "$0")/.."
 
@@ -10,7 +10,7 @@ mkdir -p dist
 // ==UserScript==
 // @name         YouTube Shorts Blocker
 // @version      ${version}
-// @description  YouTube Shorts를 숨기고 Shorts 주소를 일반 영상 플레이어로 돌려보냅니다.
+// @description  Hides YouTube Shorts and redirects Shorts URLs to the regular video player.
 // @match        *://www.youtube.com/*
 // @match        *://m.youtube.com/*
 // @match        *://youtube.com/*

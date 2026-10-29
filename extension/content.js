@@ -1,7 +1,7 @@
 // YouTube Shorts Blocker
-// - /shorts/<id> 주소는 일반 플레이어(/watch?v=<id>)로 돌려보낸다.
-// - 홈/구독/검색/채널/사이드바의 Shorts 요소를 CSS로 숨긴다.
-// Safari 웹 확장(content script)과 유저스크립트 양쪽에서 그대로 쓰도록 의존성 없이 작성.
+// - Redirects /shorts/<id> URLs to the regular player (/watch?v=<id>).
+// - Hides Shorts elements on Home/Subscriptions/Search/channels/sidebar via CSS.
+// Dependency-free so it runs unchanged as a Safari Web Extension content script and as a userscript.
 (() => {
   'use strict';
 
@@ -11,7 +11,7 @@
   const SHORTS_LINK = 'a[href^="/shorts/"], a[href^="https://www.youtube.com/shorts/"], a[href^="https://m.youtube.com/shorts/"]';
 
   const HIDE_SELECTORS = [
-    // 데스크톱: Shorts 선반(홈, 검색, 구독, 추천)
+    // Desktop: Shorts shelves (Home, Search, Subscriptions, recommendations)
     'ytd-reel-shelf-renderer',
     'ytd-rich-shelf-renderer[is-shorts]',
     'ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts])',
@@ -20,14 +20,14 @@
     'ytm-shorts-lockup-view-model',
     'ytm-shorts-lockup-view-model-v2',
 
-    // 데스크톱: Shorts로 연결되는 개별 영상 카드
+    // Desktop: individual video cards linking to Shorts
     `ytd-rich-item-renderer:has(${SHORTS_LINK})`,
     `ytd-video-renderer:has(${SHORTS_LINK})`,
     `ytd-grid-video-renderer:has(${SHORTS_LINK})`,
     `ytd-compact-video-renderer:has(${SHORTS_LINK})`,
     `yt-lockup-view-model:has(${SHORTS_LINK})`,
 
-    // 데스크톱: 왼쪽 사이드바 / 미니 사이드바의 Shorts 메뉴
+    // Desktop: Shorts entry in the left sidebar / mini sidebar
     'ytd-guide-entry-renderer:has(a[title="Shorts"])',
     'ytd-guide-entry-renderer:has(a[href^="/shorts"])',
     'ytd-mini-guide-entry-renderer[aria-label="Shorts"]',
@@ -35,11 +35,11 @@
     'ytd-mini-guide-entry-renderer:has(a[aria-label="Shorts"])',
     'ytd-mini-guide-entry-renderer:has(a[href^="/shorts"])',
 
-    // 데스크톱: 채널 페이지의 Shorts 탭
+    // Desktop: Shorts tab on channel pages
     'yt-tab-shape[tab-title="Shorts"]',
     'tp-yt-paper-tab:has(a[href$="/shorts"])',
 
-    // 모바일(m.youtube.com)
+    // Mobile (m.youtube.com)
     'ytm-reel-shelf-renderer',
     'ytm-rich-section-renderer:has(ytm-shorts-lockup-view-model)',
     'ytm-rich-section-renderer:has(ytm-shorts-lockup-view-model-v2)',
@@ -59,7 +59,7 @@
     (document.head || document.documentElement).appendChild(style);
   }
 
-  // 사이드바 Shorts 메뉴는 속성이 자주 바뀌어서, 표시 텍스트로도 한 번 더 찾아 숨긴다.
+  // The sidebar Shorts entry's attributes change often, so also match it by its visible text.
   const NAV_ENTRIES = 'ytd-mini-guide-entry-renderer, ytd-guide-entry-renderer, ytm-pivot-bar-item-renderer';
 
   function hideShortsNavEntries() {
@@ -80,7 +80,7 @@
     if (target) location.replace(target);
   }
 
-  // Shorts 링크 클릭을 가로채서 Shorts 플레이어가 아예 뜨지 않게 한다.
+  // Intercept clicks on Shorts links so the Shorts player never opens.
   function onClick(event) {
     const link = event.target instanceof Element && event.target.closest('a[href*="/shorts/"]');
     if (!link) return;
@@ -97,7 +97,7 @@
   document.addEventListener('DOMContentLoaded', injectStyle);
   document.addEventListener('click', onClick, true);
 
-  // YouTube는 SPA라 페이지 이동 시 새로고침이 없다. 내비게이션 이벤트 + 주소 폴링으로 감지.
+  // YouTube is an SPA with no reloads between pages, so detect navigation via its events plus URL polling.
   window.addEventListener('yt-navigate-start', redirectIfShorts);
   window.addEventListener('yt-navigate-finish', redirectIfShorts);
   window.addEventListener('popstate', redirectIfShorts);

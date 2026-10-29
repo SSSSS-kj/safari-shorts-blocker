@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube Shorts Blocker",
   "version": "1.0.0",
-  "description": "YouTube Shorts를 숨기고 Shorts 주소를 일반 영상 플레이어로 돌려보냅니다.",
+  "description": "Hides YouTube Shorts and redirects Shorts URLs to the regular video player.",
   "content_scripts": [
     {
       "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*", "*://youtube.com/*"],
