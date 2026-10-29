@@ -1,33 +1,33 @@
 # Safari YouTube Shorts Blocker
 
-Safari에서 YouTube Shorts를 막는 확장 프로그램입니다.
+Blocks YouTube Shorts in Safari on macOS, iOS, and iPadOS.
 
-- `/shorts/<id>` 주소로 들어가면 일반 플레이어(`/watch?v=<id>`)로 바로 이동
-- 홈·구독·검색·추천·채널 탭·사이드바의 Shorts 선반과 카드 숨김
-- 데스크톱(`www.youtube.com`)과 모바일(`m.youtube.com`) 모두 지원
+- Opening a `/shorts/<id>` URL sends you to the regular player (`/watch?v=<id>`)
+- Hides Shorts shelves and cards on Home, Subscriptions, Search, recommendations, channel tabs, and the sidebar
+- Works on both desktop (`www.youtube.com`) and mobile (`m.youtube.com`)
 
-코드는 `extension/content.js` 하나이며, 두 가지 방식으로 설치할 수 있습니다.
+All the logic lives in `extension/content.js`, and there are two ways to install it.
 
-## 방법 A: Userscripts 앱 (Xcode 없이, Mac·iPhone·iPad)
+## Option A: Userscripts app (no Xcode, Mac / iPhone / iPad)
 
-1. App Store에서 무료 앱 **Userscripts** (Justin Wasack) 설치 후, 앱에서 스크립트 폴더 지정
-   (iCloud Drive의 `Userscripts` 폴더로 하면 Mac·iPhone이 같은 파일을 씀)
-2. 스크립트 설치 — 둘 중 하나:
-   - Safari에서 [youtube-shorts-blocker.user.js](https://raw.githubusercontent.com/SSSSS-kj/safari-shorts-blocker/main/dist/youtube-shorts-blocker.user.js)를 열고 Userscripts 팝업에서 설치
-   - 또는 `dist/youtube-shorts-blocker.user.js` 를 스크립트 폴더에 직접 복사
-3. 확장 켜기
-   - **Mac**: Safari 설정 → 확장 프로그램 → Userscripts 체크, `youtube.com` 허용
-   - **iPhone/iPad**: 설정 → 앱 → Safari → 확장 프로그램 → Userscripts 켜기.
-     그다음 Safari에서 YouTube를 열고 주소창 **aA → Userscripts → 항상 허용**
-4. YouTube 새로고침
+1. Install the free **Userscripts** app (by Justin Wasack) from the App Store, then choose a scripts folder in the app
+   (pick an iCloud Drive `Userscripts` folder so your Mac and iPhone share the same file)
+2. Install the script, either way:
+   - Open [youtube-shorts-blocker.user.js](https://raw.githubusercontent.com/SSSSS-kj/safari-shorts-blocker/main/dist/youtube-shorts-blocker.user.js) in Safari and install it from the Userscripts popup
+   - Or copy `dist/youtube-shorts-blocker.user.js` into your scripts folder
+3. Enable the extension
+   - **Mac**: Safari Settings → Extensions → check Userscripts, and allow `youtube.com`
+   - **iPhone/iPad**: Settings → Apps → Safari → Extensions → turn on Userscripts.
+     Then open YouTube in Safari and tap **aA → Userscripts → Always Allow**
+4. Reload YouTube
 
-확인: `youtube.com/shorts/...` 주소를 열었을 때 `/watch?v=...` 로 바뀌면 동작 중입니다.
+To check that it's working, open a `youtube.com/shorts/...` URL. It should change to `/watch?v=...`.
 
-코드를 고친 뒤에는 `./scripts/build-userscript.sh` 로 `dist/` 를 다시 만드세요.
+After editing the code, run `./scripts/build-userscript.sh` to rebuild `dist/`.
 
-## 방법 B: 네이티브 Safari 웹 확장 (Xcode 필요)
+## Option B: Native Safari Web Extension (requires Xcode)
 
-Safari 확장은 macOS 앱 안에 담겨야 해서 **전체 Xcode**(Command Line Tools만으로는 불가)가 필요합니다.
+Safari extensions must ship inside a macOS app, so you need the **full Xcode** (Command Line Tools alone won't work).
 
 ```sh
 xcrun safari-web-extension-converter extension/ \
@@ -35,14 +35,14 @@ xcrun safari-web-extension-converter extension/ \
   --bundle-identifier com.example.shortsblocker --macos-only --no-open
 ```
 
-1. 생성된 `xcode/Shorts Blocker/Shorts Blocker.xcodeproj` 를 Xcode로 열고 Run (⌘R)
-2. 개인 서명 없이 실행했다면 Safari 설정 → 고급 → "웹 개발자용 기능 보기" 켜고,
-   개발자 메뉴 → **"서명되지 않은 확장 프로그램 허용"** 체크 (Safari 재시작 시마다 필요)
-3. Safari 설정 → 확장 프로그램 → Shorts Blocker 켜기 → `youtube.com` 접근 허용
+1. Open the generated `xcode/Shorts Blocker/Shorts Blocker.xcodeproj` in Xcode and Run (⌘R)
+2. If you built without signing, go to Safari Settings → Advanced and turn on "Show features for web developers",
+   then check **Develop → Allow Unsigned Extensions** (required again after every Safari restart)
+3. Safari Settings → Extensions → enable Shorts Blocker and allow `youtube.com`
 
-iOS용도 원하면 `--macos-only` 를 빼면 iOS 타깃이 함께 생성됩니다(실기기 설치엔 Apple ID 서명 필요).
+For iOS, drop `--macos-only` to also generate an iOS target (installing on a real device requires signing with an Apple ID).
 
-## 참고
+## Notes
 
-YouTube가 마크업을 바꾸면 일부 Shorts가 다시 보일 수 있습니다. 그럴 때는
-`extension/content.js` 의 `HIDE_SELECTORS` 에 새 셀렉터를 추가하면 됩니다.
+If YouTube changes its markup, some Shorts may show up again. When that happens,
+add new selectors to `HIDE_SELECTORS` in `extension/content.js`.
